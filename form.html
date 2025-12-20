@@ -11,14 +11,14 @@ body {
     background: #f2f2f2;
 }
 
-/* Banner image */
+/* Banner */
 .form-banner {
     width: 100%;
     height: 180px;
     object-fit: cover;
 }
 
-/* Form content */
+/* Form */
 .form-content {
     padding: 20px;
     background: white;
@@ -28,7 +28,6 @@ input, button {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
-    font-size: 14px;
 }
 
 button {
@@ -42,8 +41,8 @@ button {
 /* Loader */
 .loader {
     display: none;
-    margin-top: 15px;
     text-align: center;
+    margin-top: 15px;
 }
 
 .loader span {
@@ -55,8 +54,8 @@ button {
     animation: bounce 0.8s infinite alternate;
 }
 
-.loader span:nth-child(2) { animation-delay: .2s; }
-.loader span:nth-child(3) { animation-delay: .4s; }
+.loader span:nth-child(2) { animation-delay: .2s }
+.loader span:nth-child(3) { animation-delay: .4s }
 
 @keyframes bounce {
     to { transform: translateY(-10px); }
@@ -72,8 +71,9 @@ button {
     <h2>Mini Form</h2>
 
     <form onsubmit="submitForm(event)">
-        <input type="text" placeholder="Your Name" required>
-        <input type="email" placeholder="Your Email" required>
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="email" id="email" placeholder="Your Email" required>
+
         <button type="submit">Submit</button>
 
         <div class="loader" id="loader">
@@ -83,15 +83,29 @@ button {
 </div>
 
 <script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbzzC8aHm1yfi7qlHS7aWg2Udfxb9R9OGvM9qpOjAW1O8FPnpnhSzE3vamj-k7BETXrJbA/exec";
+
 function submitForm(e) {
     e.preventDefault();
-    const loader = document.getElementById("loader");
-    loader.style.display = "block";
 
-    setTimeout(() => {
-        loader.style.display = "none";
+    document.getElementById("loader").style.display = "block";
+
+    fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value
+        })
+    })
+    .then(() => {
         alert("Form submitted successfully!");
-    }, 2000);
+        document.getElementById("loader").style.display = "none";
+        e.target.reset();
+    })
+    .catch(() => {
+        alert("Error submitting form");
+        document.getElementById("loader").style.display = "none";
+    });
 }
 </script>
 
