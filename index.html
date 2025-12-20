@@ -13,15 +13,15 @@ body {
 }
 
 /* Open button */
-button.open-btn {
+.open-btn {
     padding: 12px 25px;
     font-size: 16px;
-    cursor: pointer;
     border: none;
     border-radius: 6px;
+    cursor: pointer;
 }
 
-/* Form container (card) */
+/* Form card (desktop) */
 .form-card {
     margin-top: 30px;
     background: white;
@@ -48,15 +48,33 @@ button.open-btn {
     border: none;
     padding: 8px 12px;
     cursor: pointer;
-    float: right;
     margin: 10px;
     border-radius: 4px;
 }
 
+/* iframe */
 iframe {
     width: 100%;
     height: 420px;
     border: none;
+}
+
+/* 📱 MOBILE FULLSCREEN */
+@media (max-width: 768px) {
+    .form-card {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        border-radius: 0;
+        z-index: 9999;
+    }
+
+    iframe {
+        height: calc(100% - 50px);
+    }
 }
 </style>
 </head>
@@ -68,7 +86,6 @@ iframe {
 
 <button class="open-btn" onclick="openForm()">Open Mini Form</button>
 
-<!-- Form Card -->
 <div class="form-card" id="formCard">
     <button class="close-btn" onclick="closeForm()">Close ✖</button>
     <iframe src="form.html"></iframe>
@@ -77,11 +94,13 @@ iframe {
 <script>
 function openForm() {
     const card = document.getElementById("formCard");
-    card.classList.add("show");
     card.style.display = "block";
+    card.classList.add("show");
 
-    // Auto scroll
-    card.scrollIntoView({ behavior: "smooth" });
+    // Auto scroll (desktop)
+    if (window.innerWidth > 768) {
+        card.scrollIntoView({ behavior: "smooth" });
+    }
 }
 
 function closeForm() {
