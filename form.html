@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Mini Form</title>
 
 <style>
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
     background: #f2f2f2;
-    margin: 0;
-}
-
-/* Form container */
-.form-container {
-    background: white;
 }
 
 /* Banner image */
@@ -26,12 +21,14 @@ body {
 /* Form content */
 .form-content {
     padding: 20px;
+    background: white;
 }
 
 input, button {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
+    font-size: 14px;
 }
 
 button {
@@ -39,23 +36,64 @@ button {
     color: white;
     border: none;
     border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Loader */
+.loader {
+    display: none;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.loader span {
+    width: 10px;
+    height: 10px;
+    background: #0f8b8d;
+    display: inline-block;
+    border-radius: 50%;
+    animation: bounce 0.8s infinite alternate;
+}
+
+.loader span:nth-child(2) { animation-delay: .2s; }
+.loader span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes bounce {
+    to { transform: translateY(-10px); }
 }
 </style>
 </head>
 
 <body>
 
-<div class="form-container">
-    <!-- YOUR IMAGE -->
-    <img src="form-banner.png" class="form-banner">
+<img src="form-banner.png" class="form-banner">
 
-    <div class="form-content">
-        <h2>Mini Form</h2>
+<div class="form-content">
+    <h2>Mini Form</h2>
+
+    <form onsubmit="submitForm(event)">
         <input type="text" placeholder="Your Name" required>
         <input type="email" placeholder="Your Email" required>
         <button type="submit">Submit</button>
-    </div>
+
+        <div class="loader" id="loader">
+            <span></span><span></span><span></span>
+        </div>
+    </form>
 </div>
+
+<script>
+function submitForm(e) {
+    e.preventDefault();
+    const loader = document.getElementById("loader");
+    loader.style.display = "block";
+
+    setTimeout(() => {
+        loader.style.display = "none";
+        alert("Form submitted successfully!");
+    }, 2000);
+}
+</script>
 
 </body>
 </html>
