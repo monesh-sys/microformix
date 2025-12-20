@@ -6,34 +6,56 @@
 
 <style>
 body {
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background: #f2f2f2;
     margin: 0;
-    padding: 20px;
 }
 
-form {
+/* Form container */
+.form-container {
     background: white;
+}
+
+/* Banner image */
+.form-banner {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+/* Form content */
+.form-content {
     padding: 20px;
-    border-radius: 10px;
 }
 
 input, button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
+}
+
+button {
+    background: #0f8b8d;
+    color: white;
+    border: none;
+    border-radius: 6px;
 }
 </style>
 </head>
 
 <body>
 
-<form>
-    <h2>Mini Form</h2>
-    <input type="text" placeholder="Your Name" required>
-    <input type="email" placeholder="Your Email" required>
-    <button type="submit">Submit</button>
-</form>
+<div class="form-container">
+    <!-- YOUR IMAGE -->
+    <img src="form-banner.png" class="form-banner">
+
+    <div class="form-content">
+        <h2>Mini Form</h2>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <button type="submit">Submit</button>
+    </div>
+</div>
 
 </body>
 </html>
