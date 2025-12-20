@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mini Form Website</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #667eea, #764ba2);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* Button */
+.open-btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    background: #00e6e6;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Form box */
+.form-box {
+    display: none;
+    background: white;
+    color: black;
+    padding: 25px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.form-box input,
+.form-box button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.close-btn {
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Open Form Button -->
+<button class="open-btn" onclick="openForm()">Open Mini Form</button>
+
+<!-- Form -->
+<div class="form-box" id="formBox">
+    <h2>Mini Form</h2>
+    <input type="text" placeholder="Enter your name">
+    <input type="email" placeholder="Enter your email">
+    <button>Submit</button>
+    <button class="close-btn" onclick="closeForm()">Close</button>
+</div>
+
+<script>
+function openForm() {
+    document.querySelector(".open-btn").style.display = "none";
+    document.getElementById("formBox").style.display = "block";
+}
+
+function closeForm() {
+    document.getElementById("formBox").style.display = "none";
+    document.querySelector(".open-btn").style.display = "block";
+}
+</script>
+
+</body>
+</html>
