@@ -1,80 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Mini Form Website</title>
 
 <style>
 body {
+    background: #0f8b8d;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #667eea, #764ba2);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: white;
+    padding: 30px;
 }
 
-/* Button */
-.open-btn {
-    padding: 15px 30px;
-    font-size: 18px;
-    background: #00e6e6;
-    color: black;
-    border: none;
-    border-radius: 8px;
+/* Open button */
+button.open-btn {
+    padding: 12px 25px;
+    font-size: 16px;
     cursor: pointer;
+    border: none;
+    border-radius: 6px;
 }
 
-/* Form box */
-.form-box {
-    display: none;
+/* Form container (card) */
+.form-card {
+    margin-top: 30px;
     background: white;
-    color: black;
-    padding: 25px;
-    border-radius: 10px;
-    width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 600px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.5s ease;
+    display: none;
 }
 
-.form-box input,
-.form-box button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
+/* Show animation */
+.form-card.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
+/* Close button */
 .close-btn {
     background: red;
     color: white;
     border: none;
+    padding: 8px 12px;
     cursor: pointer;
+    float: right;
+    margin: 10px;
+    border-radius: 4px;
+}
+
+iframe {
+    width: 100%;
+    height: 420px;
+    border: none;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Open Form Button -->
+<h1>My Mini Form Website</h1>
+<p>Click below to open the form</p>
+
 <button class="open-btn" onclick="openForm()">Open Mini Form</button>
 
-<!-- Form -->
-<div class="form-box" id="formBox">
-    <h2>Mini Form</h2>
-    <input type="text" placeholder="Enter your name">
-    <input type="email" placeholder="Enter your email">
-    <button>Submit</button>
-    <button class="close-btn" onclick="closeForm()">Close</button>
+<!-- Form Card -->
+<div class="form-card" id="formCard">
+    <button class="close-btn" onclick="closeForm()">Close ✖</button>
+    <iframe src="form.html"></iframe>
 </div>
 
 <script>
 function openForm() {
-    document.querySelector(".open-btn").style.display = "none";
-    document.getElementById("formBox").style.display = "block";
+    const card = document.getElementById("formCard");
+    card.classList.add("show");
+    card.style.display = "block";
+
+    // Auto scroll
+    card.scrollIntoView({ behavior: "smooth" });
 }
 
 function closeForm() {
-    document.getElementById("formBox").style.display = "none";
-    document.querySelector(".open-btn").style.display = "block";
+    const card = document.getElementById("formCard");
+    card.classList.remove("show");
+
+    setTimeout(() => {
+        card.style.display = "none";
+    }, 300);
 }
 </script>
 
