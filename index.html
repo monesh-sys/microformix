@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Mini Form Website</title>
@@ -10,33 +10,46 @@ body {
     font-family: Arial, sans-serif;
     color: white;
     padding: 30px;
+    margin: 0;
 }
 
 /* Open button */
 .open-btn {
-    padding: 12px 25px;
+    padding: 14px 30px;
     font-size: 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
 }
 
-/* Form card (desktop) */
+/* Overlay blur */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    z-index: 9998;
+}
+
+/* Form card */
 .form-card {
     margin-top: 30px;
     background: white;
     border-radius: 12px;
-    overflow: hidden;
     max-width: 600px;
+    width: 100%;
+    overflow: hidden;
+    display: none;
     opacity: 0;
     transform: translateY(40px);
-    transition: all 0.5s ease;
-    display: none;
+    transition: all 0.4s ease;
+    z-index: 9999;
+    position: relative;
 }
 
 /* Show animation */
 .form-card.show {
-    display: block;
     opacity: 1;
     transform: translateY(0);
 }
@@ -48,8 +61,8 @@ body {
     border: none;
     padding: 8px 12px;
     cursor: pointer;
-    margin: 10px;
     border-radius: 4px;
+    margin: 10px;
 }
 
 /* iframe */
@@ -59,17 +72,14 @@ iframe {
     border: none;
 }
 
-/* 📱 MOBILE FULLSCREEN */
+/* 📱 Mobile fullscreen */
 @media (max-width: 768px) {
     .form-card {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         max-width: none;
+        height: 100%;
         border-radius: 0;
-        z-index: 9999;
     }
 
     iframe {
@@ -82,10 +92,14 @@ iframe {
 <body>
 
 <h1>My Mini Form Website</h1>
-<p>Click below to open the form</p>
+<p>Tap the button to open the form</p>
 
 <button class="open-btn" onclick="openForm()">Open Mini Form</button>
 
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeForm()"></div>
+
+<!-- Form Card -->
 <div class="form-card" id="formCard">
     <button class="close-btn" onclick="closeForm()">Close ✖</button>
     <iframe src="form.html"></iframe>
@@ -94,10 +108,13 @@ iframe {
 <script>
 function openForm() {
     const card = document.getElementById("formCard");
-    card.style.display = "block";
-    card.classList.add("show");
+    const overlay = document.getElementById("overlay");
 
-    // Auto scroll (desktop)
+    overlay.style.display = "block";
+    card.style.display = "block";
+
+    setTimeout(() => card.classList.add("show"), 10);
+
     if (window.innerWidth > 768) {
         card.scrollIntoView({ behavior: "smooth" });
     }
@@ -105,12 +122,30 @@ function openForm() {
 
 function closeForm() {
     const card = document.getElementById("formCard");
+    const overlay = document.getElementById("overlay");
+
     card.classList.remove("show");
+    overlay.style.display = "none";
 
     setTimeout(() => {
         card.style.display = "none";
     }, 300);
 }
+
+/* Swipe down to close (mobile) */
+let startY = 0;
+const card = document.getElementById("formCard");
+
+card.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+});
+
+card.addEventListener("touchmove", e => {
+    let moveY = e.touches[0].clientY;
+    if (moveY - startY > 120) {
+        closeForm();
+    }
+});
 </script>
 
 </body>
