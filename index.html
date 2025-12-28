@@ -40,7 +40,7 @@ body {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
   width: 95%;
-  max-width: 550px;
+  max-width: 600px;
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.3);
@@ -147,6 +147,24 @@ textarea {
   color: #eee;
   margin-top: 6px;
 }
+
+/* IMAGE PREVIEW */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: center;
+}
+
+.preview-container img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
 </style>
 </head>
 
@@ -193,7 +211,11 @@ textarea {
   <!-- SCAN2PDF SECTION -->
   <div id="pdf" style="display:none;">
     <input type="file" id="pdfImages" accept="image/*" multiple>
+    <div class="preview-container" id="preview"></div>
     <button class="action" onclick="imageToPDF()">Convert Images to PDF</button>
+    <div class="note">
+      You can upload multiple images. Thumbnails are shown above.
+    </div>
   </div>
 
 </div>
@@ -213,7 +235,7 @@ function showPDF(){
   btnOCR.classList.remove("active");
 }
 
-/* OCR Function (Tamil + English) */
+/* OCR FUNCTION */
 function runOCR(){
   const img=document.getElementById("ocrImage").files[0];
   const lang=document.getElementById("lang").value;
@@ -249,7 +271,22 @@ function textToPDF(){
   pdf.save("microformix_ocr.pdf");
 }
 
-/* IMAGE → PDF */
+/* IMAGE → PDF WITH PREVIEW */
+const preview = document.getElementById("preview");
+const pdfInput = document.getElementById("pdfImages");
+pdfInput.addEventListener("change", () => {
+  preview.innerHTML="";
+  Array.from(pdfInput.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
 async function imageToPDF(){
   const files=document.getElementById("pdfImages").files;
   if(files.length===0){ alert("Select images"); return; }
@@ -266,8 +303,8 @@ async function imageToPDF(){
 
 function readImg(f){
   return new Promise(r=>{
-    const fr=new FileReader();
-    fr.onload=()=>r(fr.result);
+    const fr = new FileReader();
+    fr.onload = ()=>r(fr.result);
     fr.readAsDataURL(f);
   });
 }
