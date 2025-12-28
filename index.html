@@ -40,12 +40,13 @@ body {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
   width: 95%;
-  max-width: 600px;
+  max-width: 650px;
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.3);
   text-align: center;
   color: #fff;
+  transition: all 0.3s ease;
 }
 
 /* LOGO */
@@ -144,6 +145,7 @@ textarea {
   font-size: 14px;
   margin-top: 10px;
   color: #fff;
+  font-weight: bold;
 }
 
 .note {
@@ -168,6 +170,20 @@ textarea {
   border-radius: 10px;
   border: 2px solid #fff;
   box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+.preview-container img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
+
+/* DRAG & DROP */
+#pdfImages.dragover {
+  border: 2px dashed #fff;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.1);
 }
 </style>
 </head>
@@ -220,7 +236,7 @@ textarea {
     <div class="preview-container" id="preview"></div>
     <button class="action" onclick="imageToPDF()">Convert Images to PDF</button>
     <div class="note">
-      You can upload multiple images. Thumbnails are shown above.
+      Drag & drop images or select multiple. Thumbnails are shown above.
     </div>
   </div>
 
@@ -241,7 +257,7 @@ function showPDF(){
   btnOCR.classList.remove("active");
 }
 
-/* OCR FUNCTION */
+/* OCR FUNCTION WITH ANIMATED STATUS */
 function runOCR(){
   const img=document.getElementById("ocrImage").files[0];
   const lang=document.getElementById("lang").value;
@@ -250,13 +266,13 @@ function runOCR(){
 
   if(!img){ alert("Select a clear image"); return; }
 
-  status.innerText="OCR running… first time may take longer";
+  status.innerText="OCR running… 0%";
   out.value="";
 
   Tesseract.recognize(img, lang, {
     tessedit_pageseg_mode:1,
     logger:m=>{
-      if(m.progress) status.innerText="Progress: "+Math.floor(m.progress*100)+"%";
+      if(m.progress) status.innerText="OCR running… "+Math.floor(m.progress*100)+"%";
     }
   }).then(r=>{
     out.value=r.data.text;
@@ -277,10 +293,21 @@ function textToPDF(){
   pdf.save("microformix_ocr.pdf");
 }
 
-/* IMAGE → PDF WITH PREVIEW */
+/* IMAGE → PDF WITH THUMBNAILS AND DRAG & DROP */
 const preview = document.getElementById("preview");
 const pdfInput = document.getElementById("pdfImages");
-pdfInput.addEventListener("change", () => {
+
+pdfInput.addEventListener("change", showPreview);
+
+/* Drag & drop */
+pdfInput.addEventListener("dragover", e=>e.preventDefault());
+pdfInput.addEventListener("drop", e=>{
+  e.preventDefault();
+  pdfInput.files = e.dataTransfer.files;
+  showPreview();
+});
+
+function showPreview(){
   preview.innerHTML="";
   Array.from(pdfInput.files).forEach(file => {
     const reader = new FileReader();
@@ -291,7 +318,7 @@ pdfInput.addEventListener("change", () => {
     };
     reader.readAsDataURL(file);
   });
-});
+}
 
 async function imageToPDF(){
   const files=document.getElementById("pdfImages").files;
