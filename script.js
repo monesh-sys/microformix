@@ -1,32 +1,31 @@
-async function createPDF() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-  const input = document.getElementById("imageInput");
+function runOCR() {
+  const image = document.getElementById("imageInput").files[0];
   const status = document.getElementById("status");
+  const output = document.getElementById("output");
 
-  if (input.files.length === 0) {
-    alert("Please select at least one image");
+  if (!image) {
+    alert("Please select an image");
     return;
   }
 
-  status.innerText = "Creating PDF...";
+  status.innerText = "Reading text... please wait ⏳";
+  output.value = "";
 
-  for (let i = 0; i < input.files.length; i++) {
-    const file = input.files[i];
-    const imgData = await readImage(file);
-
-    if (i > 0) pdf.addPage();
-    pdf.addImage(imgData, "JPEG", 10, 10, 190, 270);
-  }
-
-  pdf.save("microformix_scan.pdf");
-  status.innerText = "PDF downloaded successfully ✅";
-}
-
-function readImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(file);
+  Tesseract.recognize(
+    image,
+    "eng",
+    {
+      logger: m => {
+        if (m.status === "recognizing text") {
+          status.innerText = "Progress: " + Math.floor(m.progress * 100) + "%";
+        }
+      }
+    }
+  ).then(({ data: { text } }) => {
+    output.value = text;
+    status.innerText = "Text extracted successfully ✅";
+  }).catch(err => {
+    status.innerText = "OCR failed ❌";
+    console.error(err);
   });
 }
