@@ -4,34 +4,54 @@
   <meta charset="UTF-8">
   <title>OCR Image to Text | MicroFormix</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free OCR Image to Text tool by MicroFormix">
-  <link rel="stylesheet" href="style.css">
 
-  <!-- Tesseract OCR -->
+  <!-- OCR Library -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <style>
+    body { font-family: Arial; background: #f4f6f8; text-align: center; }
+    .box { background: white; max-width: 500px; margin: auto; padding: 20px; border-radius: 10px; }
+    textarea { width: 100%; height: 200px; margin-top: 15px; }
+    button { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>OCR2Text</h1>
-  <p>by MicroFormix • Image to Text Converter</p>
-</header>
+<h1>OCR2Text</h1>
+<p>by MicroFormix</p>
 
-<main>
-  <div class="card">
-    <input type="file" id="imageInput" accept="image/*">
-    <button onclick="runOCR()">Extract Text</button>
+<div class="box">
+  <input type="file" id="imageInput" accept="image/*"><br><br>
+  <button onclick="runOCR()">Extract Text</button>
 
-    <p id="status"></p>
+  <p id="status"></p>
 
-    <textarea id="output" placeholder="Extracted text will appear here..."></textarea>
-  </div>
-</main>
+  <textarea id="output" placeholder="OCR result will appear here..." readonly></textarea>
+</div>
 
-<footer>
-  <p>© 2025 MicroFormix</p>
-</footer>
+<script>
+function runOCR() {
+  const image = document.getElementById("imageInput").files[0];
+  const status = document.getElementById("status");
+  const output = document.getElementById("output");
 
-<script src="script.js"></script>
+  if (!image) {
+    alert("Select an image first");
+    return;
+  }
+
+  status.innerText = "Processing OCR...";
+  output.value = "";
+
+  Tesseract.recognize(image, "eng").then(result => {
+    output.value = result.data.text;
+    status.innerText = "Done ✅";
+  }).catch(err => {
+    status.innerText = "OCR failed ❌";
+    console.error(err);
+  });
+}
+</script>
+
 </body>
 </html>
