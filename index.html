@@ -5,6 +5,9 @@
 <title>MicroFormix | OCR & Scan2PDF</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
 <!-- Tesseract OCR -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
@@ -12,95 +15,137 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body{
-  margin:0;
-  min-height:100vh;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#4facfe,#8f6cf1);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+/* BODY & BACKGROUND */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(-45deg, #4facfe, #8f6cf1, #43e97b, #f7b733);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.container{
-  background:#fff;
-  width:95%;
-  max-width:540px;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
-  text-align:center;
+/* ANIMATED BACKGROUND */
+@keyframes gradientBG {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
 }
 
-.logo{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
+/* CONTAINER (GLASSMORPHISM) */
+.container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  width: 95%;
+  max-width: 550px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  text-align: center;
+  color: #fff;
 }
 
-.logo-icon{
-  width:46px;
-  height:46px;
-  border-radius:12px;
-  background:#4facfe;
-  color:white;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
+/* LOGO */
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.menu{
-  margin:20px 0;
-  display:flex;
-  justify-content:center;
-  gap:10px;
+.logo-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 22px;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.menu button{
-  padding:10px 16px;
-  border:none;
-  border-radius:20px;
-  font-weight:bold;
-  cursor:pointer;
-  background:#eee;
+/* MENU */
+.menu {
+  margin: 25px 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
-.menu button.active{
-  background:#4facfe;
-  color:white;
+.menu button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  transition: 0.3s;
+  font-size: 14px;
 }
 
-input, textarea, select{
-  width:100%;
-  margin-top:10px;
+.menu button:hover {
+  background: rgba(255,255,255,0.45);
+  transform: translateY(-2px);
 }
 
-textarea{
-  height:180px;
+.menu button.active {
+  background: rgba(255,255,255,0.55);
+  color: #000;
 }
 
-.action{
-  margin-top:15px;
-  padding:10px 20px;
-  background:#4facfe;
-  color:white;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
+/* INPUTS */
+input, textarea, select {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  outline: none;
 }
 
-.note{
-  font-size:12px;
-  color:#777;
-  margin-top:6px;
+textarea {
+  height: 180px;
+  resize: none;
 }
 
-#status{
-  font-size:14px;
-  margin-top:8px;
+/* BUTTONS */
+.action {
+  margin-top: 15px;
+  padding: 12px 25px;
+  background: #43e97b;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.action:hover {
+  background: #30c373;
+  transform: translateY(-2px);
+}
+
+/* STATUS & NOTES */
+#status {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #fff;
+}
+
+.note {
+  font-size: 12px;
+  color: #eee;
+  margin-top: 6px;
 }
 </style>
 </head>
@@ -122,7 +167,7 @@ textarea{
     <button id="btnPDF" onclick="showPDF()">Scan2PDF</button>
   </div>
 
-  <!-- OCR -->
+  <!-- OCR SECTION -->
   <div id="ocr">
     <input type="file" id="ocrImage" accept="image/*">
 
@@ -141,12 +186,11 @@ textarea{
     <button class="action" onclick="textToPDF()">Download Text as PDF</button>
 
     <div class="note">
-      Tamil OCR works best with **printed clear text**.  
-      Handwritten Tamil is not supported.
+      Tamil OCR works best with **printed clear text**. Handwriting is not supported.
     </div>
   </div>
 
-  <!-- SCAN2PDF -->
+  <!-- SCAN2PDF SECTION -->
   <div id="pdf" style="display:none;">
     <input type="file" id="pdfImages" accept="image/*" multiple>
     <button class="action" onclick="imageToPDF()">Convert Images to PDF</button>
@@ -156,79 +200,64 @@ textarea{
 
 <script>
 function showOCR(){
-  ocr.style.display="block";
-  pdf.style.display="none";
+  document.getElementById("ocr").style.display="block";
+  document.getElementById("pdf").style.display="none";
   btnOCR.classList.add("active");
   btnPDF.classList.remove("active");
 }
 
 function showPDF(){
-  ocr.style.display="none";
-  pdf.style.display="block";
+  document.getElementById("ocr").style.display="none";
+  document.getElementById("pdf").style.display="block";
   btnPDF.classList.add("active");
   btnOCR.classList.remove("active");
 }
 
-/* BEST POSSIBLE BROWSER OCR (Tamil + English) */
+/* OCR Function (Tamil + English) */
 function runOCR(){
-  const img = document.getElementById("ocrImage").files[0];
-  const lang = document.getElementById("lang").value;
-  const status = document.getElementById("status");
-  const out = document.getElementById("ocrOutput");
+  const img=document.getElementById("ocrImage").files[0];
+  const lang=document.getElementById("lang").value;
+  const status=document.getElementById("status");
+  const out=document.getElementById("ocrOutput");
 
-  if(!img){
-    alert("Please select a clear image");
-    return;
-  }
+  if(!img){ alert("Select a clear image"); return; }
 
-  status.innerText = "OCR running… first time may take longer";
-  out.value = "";
+  status.innerText="OCR running… first time may take longer";
+  out.value="";
 
-  Tesseract.recognize(
-    img,
-    lang,
-    {
-      tessedit_pageseg_mode: 1,
-      logger: m => {
-        if(m.progress){
-          status.innerText = "Progress: " + Math.floor(m.progress * 100) + "%";
-        }
-      }
+  Tesseract.recognize(img, lang, {
+    tessedit_pageseg_mode:1,
+    logger:m=>{
+      if(m.progress) status.innerText="Progress: "+Math.floor(m.progress*100)+"%";
     }
-  ).then(r=>{
-    out.value = r.data.text;
-    status.innerText = "OCR completed ✅";
+  }).then(r=>{
+    out.value=r.data.text;
+    status.innerText="OCR completed ✅";
   }).catch(e=>{
     console.error(e);
-    status.innerText = "OCR failed ❌";
+    status.innerText="OCR failed ❌";
   });
 }
 
-/* TEXT → PDF */
+/* OCR TEXT → PDF */
 function textToPDF(){
-  const {jsPDF} = window.jspdf;
-  const text = document.getElementById("ocrOutput").value;
-  if(!text.trim()){
-    alert("No text to convert");
-    return;
-  }
-  const pdf = new jsPDF();
+  const {jsPDF}=window.jspdf;
+  const text=document.getElementById("ocrOutput").value;
+  if(!text.trim()){ alert("No text to convert"); return; }
+  const pdf=new jsPDF();
   pdf.text(text,10,10,{maxWidth:190});
   pdf.save("microformix_ocr.pdf");
 }
 
 /* IMAGE → PDF */
 async function imageToPDF(){
-  const files = document.getElementById("pdfImages").files;
-  if(files.length===0){
-    alert("Select images");
-    return;
-  }
-  const {jsPDF} = window.jspdf;
-  const pdf = new jsPDF();
+  const files=document.getElementById("pdfImages").files;
+  if(files.length===0){ alert("Select images"); return; }
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF();
 
   for(let i=0;i<files.length;i++){
-    const img = await readImg(files[i]);
+    const img=await readImg(files[i]);
     if(i>0) pdf.addPage();
     pdf.addImage(img,"JPEG",10,10,190,270);
   }
@@ -237,8 +266,8 @@ async function imageToPDF(){
 
 function readImg(f){
   return new Promise(r=>{
-    const fr = new FileReader();
-    fr.onload = ()=>r(fr.result);
+    const fr=new FileReader();
+    fr.onload=()=>r(fr.result);
     fr.readAsDataURL(f);
   });
 }
