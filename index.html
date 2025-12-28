@@ -2,35 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MicroFormix | Scan Image to PDF</title>
+  <title>OCR Image to Text | MicroFormix</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free online Scan Image to PDF tool by MicroFormix">
+  <meta name="description" content="Free OCR Image to Text tool by MicroFormix">
   <link rel="stylesheet" href="style.css">
 
-  <!-- jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Tesseract OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
 <header>
-  <h1>MicroFormix</h1>
-  <p>Simple Tools. Smart Work.</p>
+  <h1>OCR2Text</h1>
+  <p>by MicroFormix • Image to Text Converter</p>
 </header>
 
 <main>
   <div class="card">
-    <h2>Scan Image to PDF</h2>
-
-    <input type="file" id="imageInput" accept="image/*" multiple>
-
-    <button onclick="createPDF()">Convert to PDF</button>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="runOCR()">Extract Text</button>
 
     <p id="status"></p>
+
+    <textarea id="output" placeholder="Extracted text will appear here..."></textarea>
   </div>
 </main>
 
 <footer>
-  <p>© 2025 MicroFormix • Free Online Tools</p>
+  <p>© 2025 MicroFormix</p>
 </footer>
 
 <script src="script.js"></script>
