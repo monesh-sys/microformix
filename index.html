@@ -5,7 +5,7 @@
 <title>MicroFormix | OCR & Scan2PDF</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- OCR -->
+<!-- Tesseract OCR -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <!-- jsPDF -->
@@ -25,7 +25,7 @@ body{
 .container{
   background:#fff;
   width:95%;
-  max-width:520px;
+  max-width:540px;
   padding:25px;
   border-radius:16px;
   box-shadow:0 10px 30px rgba(0,0,0,.25);
@@ -40,8 +40,8 @@ body{
 }
 
 .logo-icon{
-  width:45px;
-  height:45px;
+  width:46px;
+  height:46px;
   border-radius:12px;
   background:#4facfe;
   color:white;
@@ -73,7 +73,7 @@ body{
   color:white;
 }
 
-input, textarea{
+input, textarea, select{
   width:100%;
   margin-top:10px;
 }
@@ -90,6 +90,12 @@ textarea{
   border:none;
   border-radius:6px;
   cursor:pointer;
+}
+
+.note{
+  font-size:12px;
+  color:#777;
+  margin-top:6px;
 }
 
 #status{
@@ -116,16 +122,31 @@ textarea{
     <button id="btnPDF" onclick="showPDF()">Scan2PDF</button>
   </div>
 
-  <!-- OCR SECTION -->
+  <!-- OCR -->
   <div id="ocr">
     <input type="file" id="ocrImage" accept="image/*">
-    <button class="action" onclick="runOCR()">Extract Text (English + Tamil)</button>
+
+    <select id="lang">
+      <option value="eng">English</option>
+      <option value="tam">Tamil (Beta)</option>
+      <option value="tam+eng">Tamil + English (Beta)</option>
+    </select>
+
+    <button class="action" onclick="runOCR()">Extract Text</button>
+
     <p id="status"></p>
+
     <textarea id="ocrOutput" readonly placeholder="OCR text will appear here..."></textarea>
+
     <button class="action" onclick="textToPDF()">Download Text as PDF</button>
+
+    <div class="note">
+      Tamil OCR works best with **printed clear text**.  
+      Handwritten Tamil is not supported.
+    </div>
   </div>
 
-  <!-- SCAN2PDF SECTION -->
+  <!-- SCAN2PDF -->
   <div id="pdf" style="display:none;">
     <input type="file" id="pdfImages" accept="image/*" multiple>
     <button class="action" onclick="imageToPDF()">Convert Images to PDF</button>
@@ -135,65 +156,79 @@ textarea{
 
 <script>
 function showOCR(){
-  document.getElementById("ocr").style.display="block";
-  document.getElementById("pdf").style.display="none";
-  setActive("btnOCR");
+  ocr.style.display="block";
+  pdf.style.display="none";
+  btnOCR.classList.add("active");
+  btnPDF.classList.remove("active");
 }
 
 function showPDF(){
-  document.getElementById("ocr").style.display="none";
-  document.getElementById("pdf").style.display="block";
-  setActive("btnPDF");
-}
-
-function setActive(id){
+  ocr.style.display="none";
+  pdf.style.display="block";
+  btnPDF.classList.add("active");
   btnOCR.classList.remove("active");
-  btnPDF.classList.remove("active");
-  document.getElementById(id).classList.add("active");
 }
 
-// OCR (Tamil + English)
+/* BEST POSSIBLE BROWSER OCR (Tamil + English) */
 function runOCR(){
   const img = document.getElementById("ocrImage").files[0];
+  const lang = document.getElementById("lang").value;
   const status = document.getElementById("status");
   const out = document.getElementById("ocrOutput");
 
-  if(!img){ alert("Select image"); return; }
+  if(!img){
+    alert("Please select a clear image");
+    return;
+  }
 
-  status.innerText="Reading Tamil + English...";
-  out.value="";
+  status.innerText = "OCR running… first time may take longer";
+  out.value = "";
 
   Tesseract.recognize(
     img,
-    "tam+eng",
-    { logger:m=>{ if(m.progress) status.innerText="Progress: "+Math.floor(m.progress*100)+"%"; } }
+    lang,
+    {
+      tessedit_pageseg_mode: 1,
+      logger: m => {
+        if(m.progress){
+          status.innerText = "Progress: " + Math.floor(m.progress * 100) + "%";
+        }
+      }
+    }
   ).then(r=>{
-    out.value=r.data.text;
-    status.innerText="OCR Completed ✅";
-  }).catch(()=>{
-    status.innerText="OCR Failed ❌";
+    out.value = r.data.text;
+    status.innerText = "OCR completed ✅";
+  }).catch(e=>{
+    console.error(e);
+    status.innerText = "OCR failed ❌";
   });
 }
 
-// OCR TEXT → PDF
+/* TEXT → PDF */
 function textToPDF(){
-  const {jsPDF}=window.jspdf;
-  const text=document.getElementById("ocrOutput").value;
-  if(!text.trim()){ alert("No text"); return; }
-  const pdf=new jsPDF();
+  const {jsPDF} = window.jspdf;
+  const text = document.getElementById("ocrOutput").value;
+  if(!text.trim()){
+    alert("No text to convert");
+    return;
+  }
+  const pdf = new jsPDF();
   pdf.text(text,10,10,{maxWidth:190});
   pdf.save("microformix_ocr.pdf");
 }
 
-// IMAGE → PDF
+/* IMAGE → PDF */
 async function imageToPDF(){
-  const files=document.getElementById("pdfImages").files;
-  if(files.length===0){ alert("Select images"); return; }
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF();
+  const files = document.getElementById("pdfImages").files;
+  if(files.length===0){
+    alert("Select images");
+    return;
+  }
+  const {jsPDF} = window.jspdf;
+  const pdf = new jsPDF();
 
   for(let i=0;i<files.length;i++){
-    const img=await readImg(files[i]);
+    const img = await readImg(files[i]);
     if(i>0) pdf.addPage();
     pdf.addImage(img,"JPEG",10,10,190,270);
   }
@@ -202,8 +237,8 @@ async function imageToPDF(){
 
 function readImg(f){
   return new Promise(r=>{
-    const fr=new FileReader();
-    fr.onload=()=>r(fr.result);
+    const fr = new FileReader();
+    fr.onload = ()=>r(fr.result);
     fr.readAsDataURL(f);
   });
 }
