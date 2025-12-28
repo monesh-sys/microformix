@@ -2,53 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OCR Image to Text | MicroFormix</title>
+  <title>MicroFormix | Scan2PDF & OCR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- OCR Library -->
+  <!-- OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
-    body { font-family: Arial; background: #f4f6f8; text-align: center; }
-    .box { background: white; max-width: 500px; margin: auto; padding: 20px; border-radius: 10px; }
-    textarea { width: 100%; height: 200px; margin-top: 15px; }
-    button { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #8f6cf1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .menu button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      background: #e9e9e9;
+      font-weight: bold;
+    }
+
+    .menu button.active {
+      background: #4facfe;
+      color: white;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    textarea {
+      height: 180px;
+    }
+
+    button.action {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #4facfe;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
-<h1>OCR2Text</h1>
-<p>by MicroFormix</p>
+<div class="container">
+  <h1>MicroFormix</h1>
+  <p>Simple Tools. Smart Work.</p>
 
-<div class="box">
-  <input type="file" id="imageInput" accept="image/*"><br><br>
-  <button onclick="runOCR()">Extract Text</button>
+  <!-- MENU -->
+  <div class="menu">
+    <button id="btnScan" class="active" onclick="showScan()">Scan2PDF</button>
+    <button id="btnOCR" onclick="showOCR()">OCR</button>
+  </div>
 
-  <p id="status"></p>
+  <!-- SCAN2PDF (Coming Soon) -->
+  <div id="scan">
+    <p>📄 Scan2PDF</p>
+    <p style="color:gray">Coming next update</p>
+  </div>
 
-  <textarea id="output" placeholder="OCR result will appear here..." readonly></textarea>
+  <!-- OCR -->
+  <div id="ocr" style="display:none;">
+    <input type="file" id="imageInput" accept="image/*">
+    <button class="action" onclick="runOCR()">Extract Text</button>
+    <p id="status"></p>
+    <textarea id="output" readonly placeholder="Extracted text will appear here..."></textarea>
+  </div>
 </div>
 
 <script>
+function showScan() {
+  document.getElementById("scan").style.display = "block";
+  document.getElementById("ocr").style.display = "none";
+  setActive("btnScan");
+}
+
+function showOCR() {
+  document.getElementById("scan").style.display = "none";
+  document.getElementById("ocr").style.display = "block";
+  setActive("btnOCR");
+}
+
+function setActive(id) {
+  document.getElementById("btnScan").classList.remove("active");
+  document.getElementById("btnOCR").classList.remove("active");
+  document.getElementById(id).classList.add("active");
+}
+
 function runOCR() {
   const image = document.getElementById("imageInput").files[0];
   const status = document.getElementById("status");
   const output = document.getElementById("output");
 
   if (!image) {
-    alert("Select an image first");
+    alert("Please select an image");
     return;
   }
 
-  status.innerText = "Processing OCR...";
+  status.innerText = "Reading text...";
   output.value = "";
 
   Tesseract.recognize(image, "eng").then(result => {
     output.value = result.data.text;
     status.innerText = "Done ✅";
-  }).catch(err => {
+  }).catch(() => {
     status.innerText = "OCR failed ❌";
-    console.error(err);
   });
 }
 </script>
